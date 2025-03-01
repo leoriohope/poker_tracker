@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/sessions_list.dart';
-import '../screens/add_session_screen.dart';
+import './add_session_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

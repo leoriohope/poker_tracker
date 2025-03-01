@@ -24,31 +24,3 @@ class PokerTrackerApp extends StatelessWidget {
     );
   }
 }
-
-// 首页界面
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(  // Scaffold提供基本的应用布局结构
-      appBar: AppBar(
-        title: const Text('Poker Tracker'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text(
-          '欢迎使用Poker Tracker',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-      // 添加浮动按钮
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: 稍后实现添加新记录的功能
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
