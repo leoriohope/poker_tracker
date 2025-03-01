@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/session.dart';
+import '../services/database_service.dart';
 
 class AddSessionScreen extends StatefulWidget {
   const AddSessionScreen({super.key});
@@ -15,6 +16,41 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
   final _cashOutController = TextEditingController();
   final _durationController = TextEditingController();
   final _notesController = TextEditingController();
+  
+  final _databaseService = DatabaseService();
+
+  Future<void> _saveSession() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final session = Session(
+          date: DateTime.now(),
+          location: _locationController.text,
+          buyIn: double.parse(_buyInController.text),
+          cashOut: double.parse(_cashOutController.text),
+          duration: int.parse(_durationController.text),
+          notes: _notesController.text,
+        );
+
+        print('Saving session: ${session.toMap()}'); // 添加日志
+
+        await _databaseService.insertSession(session);
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('保存成功')),
+          );
+          Navigator.pop(context, true);
+        }
+      } catch (e) {
+        print('Error saving session: $e'); // 添加错误日志
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('保存失败: $e')),
+          );
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +81,9 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
                 if (value == null || value.isEmpty) {
                   return '请输入买入金额';
                 }
+                if (double.tryParse(value) == null) {
+                  return '请输入有效的数字';
+                }
                 return null;
               },
             ),
@@ -55,6 +94,9 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '请输入结束金额';
+                }
+                if (double.tryParse(value) == null) {
+                  return '请输入有效的数字';
                 }
                 return null;
               },
@@ -67,6 +109,9 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
                 if (value == null || value.isEmpty) {
                   return '请输入时长';
                 }
+                if (int.tryParse(value) == null) {
+                  return '请输入有效的整数';
+                }
                 return null;
               },
             ),
@@ -77,12 +122,7 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // TODO: 保存记录
-                  Navigator.pop(context);
-                }
-              },
+              onPressed: _saveSession,
               child: const Text('保存'),
             ),
           ],
