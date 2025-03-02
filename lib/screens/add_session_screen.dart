@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/session.dart';
 import '../services/database_service.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('AddSessionScreen');
 
 class AddSessionScreen extends StatefulWidget {
   const AddSessionScreen({super.key});
@@ -31,18 +34,24 @@ class _AddSessionScreenState extends State<AddSessionScreen> {
           notes: _notesController.text,
         );
 
-        print('Saving session: ${session.toMap()}'); // 添加日志
-
-        await _databaseService.insertSession(session);
+        _logger.info('开始保存...');
+        final result = await _databaseService.insertSession(session);
+        _logger.info('保存完成，ID: $result');
         
         if (mounted) {
+          // 显示保存成功提示
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('保存成功')),
+            const SnackBar(
+              content: Text('保存成功'),
+              duration: Duration(seconds: 2),
+            ),
           );
-          Navigator.pop(context, true);
+          // 确保 SnackBar 显示完整
+          await Future.delayed(const Duration(milliseconds: 500));
+          if (mounted) Navigator.pop(context, true);
         }
       } catch (e) {
-        print('Error saving session: $e'); // 添加错误日志
+        _logger.severe('保存错误: $e'); // 调试日志
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('保存失败: $e')),
