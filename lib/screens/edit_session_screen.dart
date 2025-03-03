@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/session.dart';
 import '../services/database_service.dart';
 
@@ -21,6 +22,9 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
   
   final _databaseService = DatabaseService();
 
+  late DateTime _selectedDate;
+  late TimeOfDay _selectedTime;
+  
   @override
   void initState() {
     super.initState();
@@ -30,35 +34,28 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     _cashOutController.text = widget.session.cashOut.toString();
     _durationController.text = widget.session.duration.toString();
     _notesController.text = widget.session.notes ?? '';
+    // 初始化日期和时间
+    _selectedDate = widget.session.date;
+    _selectedTime = TimeOfDay.fromDateTime(widget.session.date);
   }
 
-  Future<void> _updateSession() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final updatedSession = Session(
-          id: widget.session.id,
-          date: widget.session.date,
-          location: _locationController.text,
-          buyIn: double.parse(_buyInController.text),
-          cashOut: double.parse(_cashOutController.text),
-          duration: int.parse(_durationController.text),
-          notes: _notesController.text,
-        );
-
-        await _databaseService.updateSession(updatedSession);
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('更新成功')),
-          );
-          Navigator.pop(context, true);
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('更新失败: $e')),
-          );
-        }
+  Future<void> _selectDateTime() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null && mounted) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: _selectedTime,
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDate = pickedDate;
+          _selectedTime = pickedTime;
+        });
       }
     }
   }
@@ -74,6 +71,21 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            ListTile(
+              title: const Text('日期和时间'),
+              subtitle: Text(
+                DateFormat('yyyy-MM-dd HH:mm').format(DateTime(
+                  _selectedDate.year,
+                  _selectedDate.month,
+                  _selectedDate.day,
+                  _selectedTime.hour,
+                  _selectedTime.minute,
+                )),
+              ),
+              trailing: const Icon(Icons.calendar_today),
+              onTap: _selectDateTime,
+            ),
+            const Divider(),
             TextFormField(
               controller: _locationController,
               decoration: const InputDecoration(labelText: '地点'),
@@ -133,7 +145,42 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _updateSession,
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    final updatedSession = Session(
+                      id: widget.session.id,
+                      date: DateTime(
+                        _selectedDate.year,
+                        _selectedDate.month,
+                        _selectedDate.day,
+                        _selectedTime.hour,
+                        _selectedTime.minute,
+                      ),
+                      location: _locationController.text,
+                      buyIn: double.parse(_buyInController.text),
+                      cashOut: double.parse(_cashOutController.text),
+                      duration: int.parse(_durationController.text),
+                      notes: _notesController.text,
+                    );
+
+                    await _databaseService.updateSession(updatedSession);
+                    
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('更新成功')),
+                      );
+                      Navigator.pop(context, true);
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('更新失败: $e')),
+                      );
+                    }
+                  }
+                }
+              },
               child: const Text('保存'),
             ),
           ],
