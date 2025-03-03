@@ -4,6 +4,7 @@ import '../services/database_service.dart';
 import '../widgets/session_list_item.dart';
 import './add_session_screen.dart';
 import './session_detail_screen.dart';
+import './analytics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -50,7 +51,12 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.analytics),
             onPressed: () {
-              // TODO: 实现统计功能
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AnalyticsScreen(),
+                ),
+              );
             },
           ),
         ],
