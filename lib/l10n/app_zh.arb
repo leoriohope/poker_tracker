@@ -1,0 +1,160 @@
+{
+    "appTitle": "德州扑克记录",
+    "@appTitle": {
+        "description": "The title of the application"
+    },
+    "analytics": "统计分析",
+    "@analytics": {
+        "description": "Title for analytics screen"
+    },
+    "noRecords": "还没有记录，点击右下角添加",
+    "@noRecords": {
+        "description": "Message shown when there are no records"
+    },
+    "totalSessions": "总场次：{count}",
+    "@totalSessions": {
+        "description": "Total number of sessions",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "totalProfit": "总盈亏",
+    "@totalProfit": {
+        "description": "Total profit amount"
+    },
+    "totalDuration": "总时长：{hours}小时",
+    "@totalDuration": {
+        "description": "Total duration in hours",
+        "placeholders": {
+            "hours": {
+                "type": "String"
+            }
+        }
+    },
+    "profitPerHour": "每小时盈亏",
+    "@profitPerHour": {
+        "description": "Average profit per hour"
+    },
+    "monthlyStats": "月度统计",
+    "@monthlyStats": {
+        "description": "Title for monthly statistics section"
+    },
+    "clickForDetails": "点击查看详情",
+    "@clickForDetails": {
+        "description": "Hint text for clickable items"
+    },
+    "profitTrend": "盈亏趋势",
+    "@profitTrend": {
+        "description": "Title for profit trend chart"
+    },
+    "locationStats": "场地统计",
+    "@locationStats": {
+        "description": "Title for location statistics section"
+    },
+    "date": "日期",
+    "@date": {
+        "description": "Date label"
+    },
+    "location": "场地",
+    "@location": {
+        "description": "Location label"
+    },
+    "profit": "盈亏",
+    "@profit": {
+        "description": "Profit label"
+    },
+    "duration": "时长",
+    "@duration": {
+        "description": "Duration label"
+    },
+    "minutes": "分钟",
+    "@minutes": {
+        "description": "Minutes unit"
+    },
+    "settings": "设置",
+    "@settings": {
+        "description": "Settings menu title"
+    },
+    "language": "语言",
+    "@language": {
+        "description": "Language selection option"
+    },
+    "loadError": "加载失败",
+    "@loadError": {
+        "description": "Error message when loading fails"
+    },
+    "editSession": "编辑记录",
+    "@editSession": {
+        "description": "Title for edit session screen"
+    },
+    "buyIn": "买入金额",
+    "@buyIn": {
+        "description": "Buy in amount label"
+    },
+    "cashOut": "结束金额",
+    "@cashOut": {
+        "description": "Cash out amount label"
+    },
+    "notes": "备注",
+    "@notes": {
+        "description": "Notes label"
+    },
+    "save": "保存",
+    "@save": {
+        "description": "Save button text"
+    },
+    "updateSuccess": "更新成功",
+    "@updateSuccess": {
+        "description": "Message shown when update is successful"
+    },
+    "updateError": "更新失败",
+    "@updateError": {
+        "description": "Message shown when update fails"
+    },
+    "enterLocation": "请输入地点",
+    "@enterLocation": {
+        "description": "Validation message for location"
+    },
+    "enterValidNumber": "请输入有效的数字",
+    "@enterValidNumber": {
+        "description": "Validation message for number input"
+    },
+    "enterDuration": "请输入时长",
+    "@enterDuration": {
+        "description": "Validation message for duration"
+    },
+    "enterValidInteger": "请输入有效的整数",
+    "@enterValidInteger": {
+        "description": "Validation message for integer input"
+    },
+    "confirmDelete": "确认删除",
+    "@confirmDelete": {
+        "description": "Title for delete confirmation dialog"
+    },
+    "confirmDeleteMessage": "确定要删除这条记录吗？",
+    "@confirmDeleteMessage": {
+        "description": "Message in delete confirmation dialog"
+    },
+    "cancel": "取消",
+    "@cancel": {
+        "description": "Cancel button text"
+    },
+    "delete": "删除",
+    "@delete": {
+        "description": "Delete button text"
+    },
+    "deleteError": "删除失败",
+    "@deleteError": {
+        "description": "Error message when delete fails"
+    },
+    "dayOfMonth": "日",
+    "@dayOfMonth": {
+        "description": "Day of month suffix"
+    },
+    "sessionList": "详细记录",
+    "@sessionList": {
+        "description": "Title for session list"
+    }
+} 

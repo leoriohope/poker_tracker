@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/session.dart';
 import '../services/database_service.dart';
 import '../widgets/session_list_item.dart';
-import './add_session_screen.dart';
+import '../providers/locale_provider.dart';
+import './edit_session_screen.dart';
 import './session_detail_screen.dart';
 import './analytics_screen.dart';
+import './settings_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import './add_session_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,8 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载失败: $e')),
+          SnackBar(content: Text('${l10n.loadError}: $e')),
         );
       }
     }
@@ -44,9 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Poker Tracker'),
+        title: Text(l10n.appTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.analytics),
@@ -58,6 +66,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
+            tooltip: l10n.analytics,
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(
+                    onLocaleChanged: (locale) {
+                      context.read<LocaleProvider>().setLocale(locale);
+                    },
+                  ),
+                ),
+              );
+            },
+            tooltip: l10n.settings,
           ),
         ],
       ),
@@ -66,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : RefreshIndicator(
               onRefresh: _loadSessions,
               child: _sessions.isEmpty
-                  ? const Center(child: Text('还没有记录，点击右下角添加'))
+                  ? Center(child: Text(l10n.noRecords))
                   : ListView.builder(
                       itemCount: _sessions.length,
                       itemBuilder: (context, index) {
@@ -94,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddSessionScreen(),
+              builder: (context) => const EditSessionScreen(),
             ),
           );
           if (result == true) {

@@ -1,0 +1,160 @@
+{
+    "appTitle": "Registro de Póker",
+    "@appTitle": {
+        "description": "The title of the application"
+    },
+    "analytics": "Análisis",
+    "@analytics": {
+        "description": "Title for analytics screen"
+    },
+    "noRecords": "No hay registros aún, haga clic en el botón para agregar",
+    "@noRecords": {
+        "description": "Message shown when there are no records"
+    },
+    "totalSessions": "Sesiones totales: {count}",
+    "@totalSessions": {
+        "description": "Total number of sessions",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "totalProfit": "Ganancia total",
+    "@totalProfit": {
+        "description": "Total profit amount"
+    },
+    "totalDuration": "Duración total: {hours} horas",
+    "@totalDuration": {
+        "description": "Total duration in hours",
+        "placeholders": {
+            "hours": {
+                "type": "String"
+            }
+        }
+    },
+    "profitPerHour": "Ganancia por hora",
+    "@profitPerHour": {
+        "description": "Average profit per hour"
+    },
+    "monthlyStats": "Estadísticas mensuales",
+    "@monthlyStats": {
+        "description": "Title for monthly statistics section"
+    },
+    "clickForDetails": "Clic para detalles",
+    "@clickForDetails": {
+        "description": "Hint text for clickable items"
+    },
+    "profitTrend": "Tendencia de ganancias",
+    "@profitTrend": {
+        "description": "Title for profit trend chart"
+    },
+    "locationStats": "Estadísticas por ubicación",
+    "@locationStats": {
+        "description": "Title for location statistics section"
+    },
+    "date": "Fecha",
+    "@date": {
+        "description": "Date label"
+    },
+    "location": "Ubicación",
+    "@location": {
+        "description": "Location label"
+    },
+    "profit": "Ganancia",
+    "@profit": {
+        "description": "Profit label"
+    },
+    "duration": "Duración",
+    "@duration": {
+        "description": "Duration label"
+    },
+    "minutes": "minutos",
+    "@minutes": {
+        "description": "Minutes unit"
+    },
+    "settings": "Configuración",
+    "@settings": {
+        "description": "Settings menu title"
+    },
+    "language": "Idioma",
+    "@language": {
+        "description": "Language selection option"
+    },
+    "loadError": "Error al cargar",
+    "@loadError": {
+        "description": "Error message when loading fails"
+    },
+    "editSession": "Editar sesión",
+    "@editSession": {
+        "description": "Title for edit session screen"
+    },
+    "buyIn": "Compra",
+    "@buyIn": {
+        "description": "Buy in amount label"
+    },
+    "cashOut": "Retiro",
+    "@cashOut": {
+        "description": "Cash out amount label"
+    },
+    "notes": "Notas",
+    "@notes": {
+        "description": "Notes label"
+    },
+    "save": "Guardar",
+    "@save": {
+        "description": "Save button text"
+    },
+    "updateSuccess": "Actualización exitosa",
+    "@updateSuccess": {
+        "description": "Message shown when update is successful"
+    },
+    "updateError": "Error al actualizar",
+    "@updateError": {
+        "description": "Message shown when update fails"
+    },
+    "enterLocation": "Ingrese la ubicación",
+    "@enterLocation": {
+        "description": "Validation message for location"
+    },
+    "enterValidNumber": "Ingrese un número válido",
+    "@enterValidNumber": {
+        "description": "Validation message for number input"
+    },
+    "enterDuration": "Ingrese la duración",
+    "@enterDuration": {
+        "description": "Validation message for duration"
+    },
+    "enterValidInteger": "Ingrese un número entero válido",
+    "@enterValidInteger": {
+        "description": "Validation message for integer input"
+    },
+    "confirmDelete": "Confirmar eliminación",
+    "@confirmDelete": {
+        "description": "Title for delete confirmation dialog"
+    },
+    "confirmDeleteMessage": "¿Está seguro de que desea eliminar este registro?",
+    "@confirmDeleteMessage": {
+        "description": "Message in delete confirmation dialog"
+    },
+    "cancel": "Cancelar",
+    "@cancel": {
+        "description": "Cancel button text"
+    },
+    "delete": "Eliminar",
+    "@delete": {
+        "description": "Delete button text"
+    },
+    "deleteError": "Error al eliminar",
+    "@deleteError": {
+        "description": "Error message when delete fails"
+    },
+    "dayOfMonth": "",
+    "@dayOfMonth": {
+        "description": "Day of month suffix"
+    },
+    "sessionList": "Lista de sesiones",
+    "@sessionList": {
+        "description": "Title for session list"
+    }
+} 

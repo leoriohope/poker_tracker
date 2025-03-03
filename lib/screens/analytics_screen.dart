@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/session.dart';
 import '../services/database_service.dart';
 import './monthly_detail_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
@@ -34,8 +35,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载失败: $e')),
+          SnackBar(content: Text('${l10n.loadError}: $e')),
         );
       }
     }
@@ -43,12 +45,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (_sessions.isEmpty) {
-      return const Center(child: Text('暂无数据'));
+      return Center(child: Text(l10n.noRecords));
     }
 
     final totalProfit = _sessions.fold<double>(
@@ -83,7 +87,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('统计分析'),
+        title: Text(l10n.analytics),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -105,6 +109,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     int totalDuration,
     double avgProfitPerHour,
   ) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -112,12 +118,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '总场次: ${_sessions.length}',
+              l10n.totalSessions(_sessions.length),
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
-              '总盈亏: ${totalProfit.toStringAsFixed(2)}',
+              '${l10n.totalProfit}: ${totalProfit.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -126,12 +132,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '总时长: ${(totalDuration / 60).toStringAsFixed(1)}小时',
+              l10n.totalDuration((totalDuration / 60).toStringAsFixed(1)),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              '每小时盈亏: ${avgProfitPerHour.toStringAsFixed(2)}',
+              '${l10n.profitPerHour}: ${avgProfitPerHour.toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
@@ -141,8 +147,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _buildMonthlyStats(Map<String, double> monthlyStats) {
+    final l10n = AppLocalizations.of(context)!;
     final sortedMonths = monthlyStats.keys.toList()
-      ..sort((a, b) => b.compareTo(a));  // 按月份降序排序
+      ..sort((a, b) => b.compareTo(a));
 
     return Card(
       child: Padding(
@@ -153,9 +160,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('月度统计', style: TextStyle(fontSize: 18)),
+                Text(l10n.monthlyStats, style: const TextStyle(fontSize: 18)),
                 Text(
-                  '点击查看详情',
+                  l10n.clickForDetails,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
@@ -225,11 +232,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _buildProfitChart() {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (_sessions.isEmpty) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('暂无数据'),
+          padding: const EdgeInsets.all(16),
+          child: Text(l10n.noRecords),
         ),
       );
     }
@@ -237,13 +246,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     // 按日期分组并计算每日总盈亏
     final dailyProfits = <DateTime, double>{};
     for (var session in _sessions) {
-      // 将时间设置为当天的0点，这样可以按天分组
       final day = DateTime(session.date.year, session.date.month, session.date.day);
       final profit = session.cashOut - session.buyIn;
       dailyProfits[day] = (dailyProfits[day] ?? 0) + profit;
     }
 
-    // 按日期排序
     final sortedDays = dailyProfits.keys.toList()
       ..sort((a, b) => a.compareTo(b));
 
@@ -262,22 +269,29 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final profitRange = (maxProfit - minProfit).abs();
     final yMargin = profitRange * 0.1;
 
+    // 确保网格间隔不为零
+    final horizontalInterval = profitRange > 0 ? profitRange / 5 : 100.0;
+    final leftTitlesInterval = profitRange > 0 ? profitRange / 4 : 100.0;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('盈亏趋势', style: TextStyle(fontSize: 18)),
+            Text(
+              l10n.profitTrend,
+              style: const TextStyle(fontSize: 18),
+            ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 250,
+              height: 300,
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: true,
-                    horizontalInterval: profitRange / 5,
+                    horizontalInterval: horizontalInterval,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
                         color: Colors.grey[300],
@@ -296,7 +310,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 80,
-                        interval: profitRange / 4,
+                        interval: leftTitlesInterval,
                         getTitlesWidget: (value, meta) {
                           String text = value >= 1000 || value <= -1000
                               ? '${(value / 1000).toStringAsFixed(1)}k'
@@ -403,21 +417,31 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _buildLocationStats(Map<String, double> locationStats) {
+    final l10n = AppLocalizations.of(context)!;
+    final sortedLocations = locationStats.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('场地统计', style: TextStyle(fontSize: 18)),
+            Text(
+              l10n.locationStats,
+              style: const TextStyle(fontSize: 18),
+            ),
             const SizedBox(height: 16),
-            ...locationStats.entries.map((entry) {
+            ...sortedLocations.map((entry) {
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(entry.key),
+                    Text(
+                      entry.key,
+                      style: const TextStyle(fontSize: 16),
+                    ),
                     Text(
                       entry.value.toStringAsFixed(2),
                       style: TextStyle(
@@ -428,7 +452,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   ],
                 ),
               );
-            }),
+            }).toList(),
           ],
         ),
       ),

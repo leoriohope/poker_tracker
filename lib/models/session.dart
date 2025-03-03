@@ -24,8 +24,7 @@ class Session {
 
   // 将对象转换为Map，用于数据库存储
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
+    final map = <String, dynamic>{
       'date': date.toIso8601String(),  // 将DateTime转换为字符串
       'buyIn': buyIn,
       'cashOut': cashOut,
@@ -33,6 +32,12 @@ class Session {
       'duration': duration,
       'notes': notes,
     };
+    
+    if (id != null) {
+      map['id'] = id;
+    }
+    
+    return map;
   }
 
   // 从Map创建Session对象，用于从数据库读取数据

@@ -1,0 +1,160 @@
+{
+    "appTitle": "Poker Tracker",
+    "@appTitle": {
+        "description": "The title of the application"
+    },
+    "analytics": "Analytics",
+    "@analytics": {
+        "description": "Title for analytics screen"
+    },
+    "noRecords": "No records yet, click the button below to add",
+    "@noRecords": {
+        "description": "Message shown when there are no records"
+    },
+    "totalSessions": "Total Sessions: {count}",
+    "@totalSessions": {
+        "description": "Total number of sessions",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "totalProfit": "Total Profit",
+    "@totalProfit": {
+        "description": "Total profit amount"
+    },
+    "totalDuration": "Total Duration: {hours} hours",
+    "@totalDuration": {
+        "description": "Total duration in hours",
+        "placeholders": {
+            "hours": {
+                "type": "String"
+            }
+        }
+    },
+    "profitPerHour": "Profit per Hour",
+    "@profitPerHour": {
+        "description": "Average profit per hour"
+    },
+    "monthlyStats": "Monthly Statistics",
+    "@monthlyStats": {
+        "description": "Title for monthly statistics section"
+    },
+    "clickForDetails": "Click for details",
+    "@clickForDetails": {
+        "description": "Hint text for clickable items"
+    },
+    "profitTrend": "Profit Trend",
+    "@profitTrend": {
+        "description": "Title for profit trend chart"
+    },
+    "locationStats": "Location Statistics",
+    "@locationStats": {
+        "description": "Title for location statistics section"
+    },
+    "date": "Date",
+    "@date": {
+        "description": "Date label"
+    },
+    "location": "Location",
+    "@location": {
+        "description": "Location label"
+    },
+    "profit": "Profit",
+    "@profit": {
+        "description": "Profit label"
+    },
+    "duration": "Duration",
+    "@duration": {
+        "description": "Duration label"
+    },
+    "minutes": "minutes",
+    "@minutes": {
+        "description": "Minutes unit"
+    },
+    "settings": "Settings",
+    "@settings": {
+        "description": "Settings menu title"
+    },
+    "language": "Language",
+    "@language": {
+        "description": "Language selection option"
+    },
+    "loadError": "Load failed",
+    "@loadError": {
+        "description": "Error message when loading fails"
+    },
+    "editSession": "Edit Session",
+    "@editSession": {
+        "description": "Title for edit session screen"
+    },
+    "buyIn": "Buy In",
+    "@buyIn": {
+        "description": "Buy in amount label"
+    },
+    "cashOut": "Cash Out",
+    "@cashOut": {
+        "description": "Cash out amount label"
+    },
+    "notes": "Notes",
+    "@notes": {
+        "description": "Notes label"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Save button text"
+    },
+    "updateSuccess": "Update successful",
+    "@updateSuccess": {
+        "description": "Message shown when update is successful"
+    },
+    "updateError": "Update failed",
+    "@updateError": {
+        "description": "Message shown when update fails"
+    },
+    "enterLocation": "Please enter location",
+    "@enterLocation": {
+        "description": "Validation message for location"
+    },
+    "enterValidNumber": "Please enter a valid number",
+    "@enterValidNumber": {
+        "description": "Validation message for number input"
+    },
+    "enterDuration": "Please enter duration",
+    "@enterDuration": {
+        "description": "Validation message for duration"
+    },
+    "enterValidInteger": "Please enter a valid integer",
+    "@enterValidInteger": {
+        "description": "Validation message for integer input"
+    },
+    "confirmDelete": "Confirm Delete",
+    "@confirmDelete": {
+        "description": "Title for delete confirmation dialog"
+    },
+    "confirmDeleteMessage": "Are you sure you want to delete this record?",
+    "@confirmDeleteMessage": {
+        "description": "Message in delete confirmation dialog"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Cancel button text"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "Delete button text"
+    },
+    "deleteError": "Delete failed",
+    "@deleteError": {
+        "description": "Error message when delete fails"
+    },
+    "dayOfMonth": "th",
+    "@dayOfMonth": {
+        "description": "Day of month suffix"
+    },
+    "sessionList": "Session List",
+    "@sessionList": {
+        "description": "Title for session list"
+    }
+} 

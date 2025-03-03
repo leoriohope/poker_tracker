@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/session.dart';
 import '../services/database_service.dart';
 import '../screens/edit_session_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SessionDetailScreen extends StatelessWidget {
   final Session session;
@@ -12,6 +13,7 @@ class SessionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final profit = session.cashOut - session.buyIn;
     final profitColor = profit >= 0 ? Colors.green : Colors.red;
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
@@ -42,16 +44,16 @@ class SessionDetailScreen extends StatelessWidget {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('确认删除'),
-                  content: const Text('确定要删除这条记录吗？'),
+                  title: Text(l10n.confirmDelete),
+                  content: Text(l10n.confirmDeleteMessage),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: const Text('取消'),
+                      child: Text(l10n.cancel),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text('删除'),
+                      child: Text(l10n.delete),
                     ),
                   ],
                 ),
@@ -66,7 +68,7 @@ class SessionDetailScreen extends StatelessWidget {
                 } catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('删除失败: $e')),
+                      SnackBar(content: Text('${l10n.deleteError}: $e')),
                     );
                   }
                 }
@@ -85,7 +87,7 @@ class SessionDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ListTile(
-                    title: const Text('盈亏'),
+                    title: Text(l10n.profit),
                     trailing: Text(
                       '${profit >= 0 ? '+' : ''}$profit',
                       style: TextStyle(
@@ -96,13 +98,13 @@ class SessionDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const Divider(),
-                  _buildDetailRow('日期', dateFormat.format(session.date)),
-                  _buildDetailRow('地点', session.location),
-                  _buildDetailRow('买入', '${session.buyIn}'),
-                  _buildDetailRow('结束', '${session.cashOut}'),
-                  _buildDetailRow('时长', '${session.duration} 分钟'),
+                  _buildDetailRow(l10n.date, dateFormat.format(session.date)),
+                  _buildDetailRow(l10n.location, session.location),
+                  _buildDetailRow(l10n.buyIn, '${session.buyIn}'),
+                  _buildDetailRow(l10n.cashOut, '${session.cashOut}'),
+                  _buildDetailRow(l10n.duration, '${session.duration} ${l10n.minutes}'),
                   if (session.notes?.isNotEmpty ?? false)
-                    _buildDetailRow('备注', session.notes!),
+                    _buildDetailRow(l10n.notes, session.notes!),
                 ],
               ),
             ),

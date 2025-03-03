@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/session.dart';
 import '../services/database_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditSessionScreen extends StatefulWidget {
-  final Session session;
+  final Session? session;
 
-  const EditSessionScreen({super.key, required this.session});
+  const EditSessionScreen({super.key, this.session});
 
   @override
   State<EditSessionScreen> createState() => _EditSessionScreenState();
@@ -29,14 +30,14 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
   void initState() {
     super.initState();
     // 初始化表单数据
-    _locationController.text = widget.session.location;
-    _buyInController.text = widget.session.buyIn.toString();
-    _cashOutController.text = widget.session.cashOut.toString();
-    _durationController.text = widget.session.duration.toString();
-    _notesController.text = widget.session.notes ?? '';
+    _locationController.text = widget.session?.location ?? '';
+    _buyInController.text = widget.session?.buyIn.toString() ?? '';
+    _cashOutController.text = widget.session?.cashOut.toString() ?? '';
+    _durationController.text = widget.session?.duration.toString() ?? '';
+    _notesController.text = widget.session?.notes ?? '';
     // 初始化日期和时间
-    _selectedDate = widget.session.date;
-    _selectedTime = TimeOfDay.fromDateTime(widget.session.date);
+    _selectedDate = widget.session?.date ?? DateTime.now();
+    _selectedTime = TimeOfDay.fromDateTime(widget.session?.date ?? DateTime.now());
   }
 
   Future<void> _selectDateTime() async {
@@ -62,9 +63,11 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('编辑记录'),
+        title: Text(l10n.editSession),
       ),
       body: Form(
         key: _formKey,
@@ -72,7 +75,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             ListTile(
-              title: const Text('日期和时间'),
+              title: Text(l10n.date),
               subtitle: Text(
                 DateFormat('yyyy-MM-dd HH:mm').format(DateTime(
                   _selectedDate.year,
@@ -88,59 +91,61 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
             const Divider(),
             TextFormField(
               controller: _locationController,
-              decoration: const InputDecoration(labelText: '地点'),
+              decoration: InputDecoration(labelText: l10n.location),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '请输入地点';
+                  return l10n.enterLocation;
                 }
                 return null;
               },
             ),
             TextFormField(
               controller: _buyInController,
-              decoration: const InputDecoration(labelText: '买入金额'),
+              decoration: InputDecoration(labelText: l10n.buyIn),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '请输入买入金额';
+                  return l10n.enterValidNumber;
                 }
                 if (double.tryParse(value) == null) {
-                  return '请输入有效的数字';
+                  return l10n.enterValidNumber;
                 }
                 return null;
               },
             ),
             TextFormField(
               controller: _cashOutController,
-              decoration: const InputDecoration(labelText: '结束金额'),
+              decoration: InputDecoration(labelText: l10n.cashOut),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '请输入结束金额';
+                  return l10n.enterValidNumber;
                 }
                 if (double.tryParse(value) == null) {
-                  return '请输入有效的数字';
+                  return l10n.enterValidNumber;
                 }
                 return null;
               },
             ),
             TextFormField(
               controller: _durationController,
-              decoration: const InputDecoration(labelText: '时长（分钟）'),
+              decoration: InputDecoration(
+                labelText: '${l10n.duration} (${l10n.minutes})',
+              ),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '请输入时长';
+                  return l10n.enterDuration;
                 }
                 if (int.tryParse(value) == null) {
-                  return '请输入有效的整数';
+                  return l10n.enterValidInteger;
                 }
                 return null;
               },
             ),
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(labelText: '备注'),
+              decoration: InputDecoration(labelText: l10n.notes),
               maxLines: 3,
             ),
             const SizedBox(height: 20),
@@ -148,8 +153,8 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   try {
-                    final updatedSession = Session(
-                      id: widget.session.id,
+                    final session = Session(
+                      id: widget.session?.id,
                       date: DateTime(
                         _selectedDate.year,
                         _selectedDate.month,
@@ -164,24 +169,30 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                       notes: _notesController.text,
                     );
 
-                    await _databaseService.updateSession(updatedSession);
+                    if (widget.session == null) {
+                      // 新建记录
+                      await _databaseService.insertSession(session);
+                    } else {
+                      // 更新记录
+                      await _databaseService.updateSession(session);
+                    }
                     
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('更新成功')),
+                        SnackBar(content: Text(l10n.updateSuccess)),
                       );
                       Navigator.pop(context, true);
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('更新失败: $e')),
+                        SnackBar(content: Text('${l10n.updateError}: $e')),
                       );
                     }
                   }
                 }
               },
-              child: const Text('保存'),
+              child: Text(l10n.save),
             ),
           ],
         ),

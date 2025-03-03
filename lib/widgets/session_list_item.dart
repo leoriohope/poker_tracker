@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/session.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SessionListItem extends StatelessWidget {
   final Session session;
@@ -14,6 +15,7 @@ class SessionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final profit = session.cashOut - session.buyIn;
     final profitColor = profit >= 0 ? Colors.green : Colors.red;
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
@@ -23,7 +25,7 @@ class SessionListItem extends StatelessWidget {
       child: ListTile(
         title: Text(session.location),
         subtitle: Text(
-          '${dateFormat.format(session.date)} (${session.duration}分钟)',
+          '${dateFormat.format(session.date)} (${session.duration} ${l10n.minutes})',
         ),
         trailing: Text(
           '${profit >= 0 ? '+' : ''}$profit',
