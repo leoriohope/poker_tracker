@@ -84,4 +84,23 @@ class DatabaseService {
       throw Exception('Failed to get sessions: $e');
     }
   }
+
+  Future<int> deleteSession(int id) async {
+    final db = await database;
+    return await db.delete(
+      'sessions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> updateSession(Session session) async {
+    final db = await database;
+    return await db.update(
+      'sessions',
+      session.toMap(),
+      where: 'id = ?',
+      whereArgs: [session.id],
+    );
+  }
 }
