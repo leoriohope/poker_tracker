@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final sessions = await _databaseService.getSessions();
       setState(() {
-        _sessions = sessions;
+        _sessions = sessions..sort((a, b) => b.date.compareTo(a.date));
         _isLoading = false;
       });
     } catch (e) {

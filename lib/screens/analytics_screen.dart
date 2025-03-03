@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../models/session.dart';
 import '../services/database_service.dart';
+import './monthly_detail_screen.dart';
 
 class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
@@ -27,7 +28,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     try {
       final sessions = await _databaseService.getSessions();
       setState(() {
-        _sessions = sessions;
+        _sessions = sessions..sort((a, b) => b.date.compareTo(a.date));
         _isLoading = false;
       });
     } catch (e) {
@@ -149,32 +150,71 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('月度统计', style: TextStyle(fontSize: 18)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('月度统计', style: TextStyle(fontSize: 18)),
+                Text(
+                  '点击查看详情',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ...sortedMonths.map((month) {
               final profit = monthlyStats[month]!;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(month),
-                    Row(
-                      children: [
-                        Text(
-                          profit.toStringAsFixed(2),
-                          style: TextStyle(
-                            color: profit >= 0 ? Colors.green : Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        if (profit >= 0)
-                          const Icon(Icons.trending_up, color: Colors.green, size: 16)
-                        else
-                          const Icon(Icons.trending_down, color: Colors.red, size: 16),
-                      ],
+              final monthSessions = _sessions.where((session) {
+                return DateFormat('yyyy-MM').format(session.date) == month;
+              }).toList();
+
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MonthlyDetailScreen(
+                        monthKey: month,
+                        sessions: monthSessions,
+                      ),
                     ),
-                  ],
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        month,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            profit.toStringAsFixed(2),
+                            style: TextStyle(
+                              color: profit >= 0 ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            profit >= 0 ? Icons.trending_up : Icons.trending_down,
+                            color: profit >= 0 ? Colors.green : Colors.red,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             }).toList(),
@@ -185,34 +225,42 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   }
 
   Widget _buildProfitChart() {
-    if (_sessions.length < 2) {
+    if (_sessions.isEmpty) {
       return const Card(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Text('需要至少两条记录来显示趋势图'),
+          child: Text('暂无数据'),
         ),
       );
     }
 
-    // 按日期排序
-    final sortedSessions = List<Session>.from(_sessions)
-      ..sort((a, b) => a.date.compareTo(b.date));
-
-    final spots = sortedSessions.map((session) {
+    // 按日期分组并计算每日总盈亏
+    final dailyProfits = <DateTime, double>{};
+    for (var session in _sessions) {
+      // 将时间设置为当天的0点，这样可以按天分组
+      final day = DateTime(session.date.year, session.date.month, session.date.day);
       final profit = session.cashOut - session.buyIn;
-      // 使用 DateTime.millisecondsSinceEpoch 作为 x 轴的值
+      dailyProfits[day] = (dailyProfits[day] ?? 0) + profit;
+    }
+
+    // 按日期排序
+    final sortedDays = dailyProfits.keys.toList()
+      ..sort((a, b) => a.compareTo(b));
+
+    // 生成数据点
+    final spots = sortedDays.map((day) {
       return FlSpot(
-        session.date.millisecondsSinceEpoch.toDouble(),
-        profit,
+        day.millisecondsSinceEpoch.toDouble(),
+        dailyProfits[day]!,
       );
     }).toList();
 
-    // 计算最大和最小盈亏，用于设置Y轴范围
-    final profits = sortedSessions.map((s) => s.cashOut - s.buyIn).toList();
+    // 计算Y轴范围
+    final profits = dailyProfits.values.toList();
     final maxProfit = profits.reduce((max, value) => value > max ? value : max);
     final minProfit = profits.reduce((min, value) => value < min ? value : min);
     final profitRange = (maxProfit - minProfit).abs();
-    final yMargin = profitRange * 0.1; // 上下留10%的边距
+    final yMargin = profitRange * 0.1;
 
     return Card(
       child: Padding(
@@ -223,13 +271,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             const Text('盈亏趋势', style: TextStyle(fontSize: 18)),
             const SizedBox(height: 16),
             SizedBox(
-              height: 250, // 增加图表高度
+              height: 250,
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: true,
-                    horizontalInterval: profitRange / 5, // 横向网格线间隔
+                    horizontalInterval: profitRange / 5,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
                         color: Colors.grey[300],
@@ -247,10 +295,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 60,
+                        reservedSize: 80,
+                        interval: profitRange / 4,
                         getTitlesWidget: (value, meta) {
+                          String text = value >= 1000 || value <= -1000
+                              ? '${(value / 1000).toStringAsFixed(1)}k'
+                              : value.toStringAsFixed(0);
                           return Text(
-                            value.toStringAsFixed(0),
+                            text,
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 12,
@@ -303,10 +355,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       dotData: FlDotData(
                         show: true,
                         getDotPainter: (spot, percent, barData, index) {
-                          final profit = spot.y;
                           return FlDotCirclePainter(
                             radius: 6,
-                            color: profit >= 0 ? Colors.green : Colors.red,
+                            color: spot.y >= 0 ? Colors.green : Colors.red,
                             strokeWidth: 2,
                             strokeColor: Colors.white,
                           );
@@ -321,19 +372,17 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
                       tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-                      getTooltipItems: (List<LineBarSpot> touchedSpots) {
-                        return touchedSpots.map((LineBarSpot touchedSpot) {
-                          final date = DateTime.fromMillisecondsSinceEpoch(
-                            touchedSpot.x.toInt(),
-                          );
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map((spot) {
+                          final date = DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
                           return LineTooltipItem(
                             '${DateFormat('yyyy-MM-dd').format(date)}\n',
                             const TextStyle(color: Colors.white, fontSize: 12),
                             children: [
                               TextSpan(
-                                text: touchedSpot.y.toStringAsFixed(2),
+                                text: spot.y.toStringAsFixed(2),
                                 style: TextStyle(
-                                  color: touchedSpot.y >= 0 ? Colors.green[200] : Colors.red[200],
+                                  color: spot.y >= 0 ? Colors.green[200] : Colors.red[200],
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
